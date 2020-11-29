@@ -1,4 +1,6 @@
-# written by Hussain
+# created by Hussain
+# most of the code is from https://www.pyimagesearch.com/2020/05/04/covid-19-face-mask-detector-with-opencv-keras-tensorflow-and-deep-learning/
+# and has been adapted to our needs
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 import numpy as np
@@ -23,7 +25,10 @@ net = cv2.dnn.readNet(prototxtPath, weightsPath)
 def process_image_frame(image_frame, model_size=(224, 224)):
     # load the input image from disk, clone it, and grab the image spatial
     # dimensions
-    image = cv2.imread(image_frame)  # (args["image"])
+    if type(image_frame) == str:
+        image = cv2.imread(image_frame)  # (args["image"])
+    else:
+        image = image_frame
     orig = image.copy()
     (h, w) = image.shape[:2]
     # construct a blob from the image
@@ -66,24 +71,31 @@ def process_image_frame(image_frame, model_size=(224, 224)):
 def detect_mask_and_apply_modification_on(image_frame, faces, model):
     # determine the class label and color we'll use to draw
     # the bounding box and text
+    count_mask = 0
+    count_none_mask = 0
     for face in faces:
         # pass the face through the model to determine if the face
         # has a mask or not
-        (mask, withoutMask) = model.predict(face)[0]
-        label = "Mask" if mask > withoutMask else "No Mask"
-        color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
+        # (mask, withoutMask) = model.predict(face)[0]
+        # label = "Mask" if mask > withoutMask else "No Mask"
+        # if mask > withoutMask:
+        #     count_mask = count_mask +1
+        # else:
+        #     count_none_mask = count_none_mask +1
+        # color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
         # include the probability in the label
-        label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
+        # label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
         # display the label and bounding box rectangle on the output
         # frame
         (startX, startY, endX, endY) = face[1]
-        cv2.putText(image_frame, label, (startX, startY - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
-        cv2.rectangle(image_frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
+        # cv2.putText(image_frame, label, (startX, startY - 10),
+        #             cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
+        cv2.rectangle(image_frame, (startX, startY), (endX, endY), (0, 255, 0), 2)#color, 2)
         # show the output image
-    return image_frame
+    return image_frame, count_mask, count_none_mask
 
-def video_detection(model, model_size=(224,224)):
+
+def video_detection(model, model_size=(224, 224)):
     print("[INFO] starting video stream...")
     vs = VideoStream(src=0).start()
     time.sleep(2.0)
@@ -96,7 +108,7 @@ def video_detection(model, model_size=(224,224)):
         # detect faces in the frame and determine if they are wearing a
         # face mask or not
         faces = process_image_frame(frame, model_size)
-        frame = detect_mask_and_apply_modification_on(frame, faces, model)
+        frame, count_mask, count_none_mask = detect_mask_and_apply_modification_on(frame, faces, model)
         # show the output frame
         cv2.imshow("Frame", frame)
         key = cv2.waitKey(1) & 0xFF

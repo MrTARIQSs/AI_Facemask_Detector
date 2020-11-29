@@ -4,34 +4,45 @@ from tkinter import filedialog
 from tkinter import *
 from PIL import Image
 from PIL import ImageTk
+from controller import process_image_frame
+from controller import detect_mask_and_apply_modification_on
 import os
-
 root = tk.Tk()
-
+countWearing = 0
+countNotWearing = 0
 def addPic():
     global leftPanel, rightPanel
     fileName = filedialog.askopenfilename(initialdir="/", title="Select Picture", filetypes=(("PNG", "*.PNG"), ("JPEG", "*.JPEG"), ("JPG", "*.JPG"), (("All Files", "*.*"))))
     if len(fileName) > 0: #insure an image was selected
         image = cv2.imread(fileName) #read the selected image
+        faces = process_image_frame(fileName)
+        # model_name = menu.selected
+        # if model_name == "model1":
+        #     model =
+        # Create the model to make prediction
+        detected_image, count_mask, count_none_mask = detect_mask_and_apply_modification_on(image.copy(), faces, None)
+        countWearing = count_mask
+        countNotWearing = count_none_mask
         width = 600
         height = 338
         image = cv2.resize(image, (width,height), interpolation=cv2.INTER_AREA) #resizing picture to a more reasonable size
-        grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) #converting the colored BGR format of cv2 to grayscale
-        edge = cv2.Canny(grayscale, 60, 120)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) #converting the BGR format of cv2 to RGB
+        detected_image = cv2.resize(detected_image, (width, height), interpolation=cv2.INTER_AREA)
+        detected_image = cv2.cvtColor(detected_image, cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
-        edge = Image.fromarray(edge)
+        detected_image = Image.fromarray(detected_image)
         image = ImageTk.PhotoImage(image)
-        edge = ImageTk.PhotoImage(edge)
+        detected_image = ImageTk.PhotoImage(detected_image)
         leftPanel.configure(image=image)
-        rightPanel.configure(image=edge)
+        rightPanel.configure(image=detected_image)
         leftPanel.image = image
-        rightPanel.image = edge
+        rightPanel.image = detected_image
+
+        label.configure(text = "Wearing a mask: "+str(countWearing)+"\nNo wearing a mask: "+str(countNotWearing))
 
 root.configure(background="#aaaaaa")
 
-countWearing = 0
-countNotWearing = 0
+
 
 placeholder = PhotoImage(file='black-600x338.png')
 
