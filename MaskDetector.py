@@ -6,13 +6,17 @@ from PIL import Image
 from PIL import ImageTk
 from controller import process_image_frame
 from controller import detect_mask_and_apply_modification_on
+from controller import video_detection
 import os
 root = tk.Tk()
 countWearing = 0
 countNotWearing = 0
+def showVid():
+    video_detection(None)
+
 def addPic():
     global leftPanel, rightPanel
-    fileName = filedialog.askopenfilename(initialdir="/", title="Select Picture", filetypes=(("PNG", "*.PNG"), ("JPEG", "*.JPEG"), ("JPG", "*.JPG"), (("All Files", "*.*"))))
+    fileName = filedialog.askopenfilename(initialdir="/", title="Select an image", filetypes=(("Image files",("*.PNG", "*.JPEG", "*.JPG")), (("All Files", "*.*"))))
     if len(fileName) > 0: #insure an image was selected
         image = cv2.imread(fileName) #read the selected image
         faces = process_image_frame(fileName)
@@ -38,7 +42,7 @@ def addPic():
         leftPanel.image = image
         rightPanel.image = detected_image
 
-        label.configure(text = "Wearing a mask: "+str(countWearing)+"\nNo wearing a mask: "+str(countNotWearing))
+        label.configure(text = "\nNumber of people wearing a mask: "+str(countWearing)+"\nNumber of people not wearing a mask: "+str(countNotWearing))
 
 root.configure(background="#aaaaaa")
 
@@ -57,15 +61,19 @@ rightPanel.pack(side="right", padx=10, pady=120)
 frame = tk.Frame(root, bg="black")
 frame.place(relwidth="1.0", relheight="0.2", rely="0")
 
-icon = PhotoImage(file='addPhoto.png')
+importIcon = PhotoImage(file='import.png')
+liveFeedIcon = PhotoImage(file='camera.png')
 
-insertPic = tk.Button(frame, image=icon, bg="black", command=addPic, pady=10)
-insertPic.pack()
+insertPic = tk.Button(frame, image=importIcon, bg="black", command=addPic, pady=10)
+insertPic.pack(side="right", padx=30, pady=10)
+
+vidFeed = tk.Button(frame, image=liveFeedIcon, bg="black", command=showVid, pady=10)
+vidFeed.pack(side="left", padx=30, pady=10)
 
 frame2 = tk.Frame(root, bg="black")
 frame2.place(relwidth="1.0", relheight="0.2", rely="0.8")
 
-label = Label(frame2, text="Wearing a mask: "+str(countWearing)+"\nNo wearing a mask: "+str(countNotWearing), bg="black", fg="white", font="none 20 bold")
+label = Label(frame2, text="\nNumber of people wearing a mask: "+str(countWearing)+"\nNumber of people not wearing a mask: "+str(countNotWearing), bg="black", fg="white", font="none 20 bold")
 label.pack()
 
 root.resizable(0,0)

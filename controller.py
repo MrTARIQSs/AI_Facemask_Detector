@@ -117,3 +117,4 @@ def video_detection(model, model_size=(224, 224)):
             break
     cv2.destroyAllWindows()
     vs.stop()
+
