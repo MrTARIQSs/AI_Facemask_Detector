@@ -7,12 +7,15 @@ from PIL import ImageTk
 from controller import process_image_frame
 from controller import detect_mask_and_apply_modification_on
 from controller import video_detection
+from Load381model import *
 import os
 root = tk.Tk()
 countWearing = 0
 countNotWearing = 0
+mobilenet_v2_model = loadMobileNetModel()
+our_model = loadOurOwnModel()
 def showVid():
-    video_detection(None)
+    video_detection(our_model)
 
 def addPic():
     global leftPanel, rightPanel
@@ -24,7 +27,7 @@ def addPic():
         # if model_name == "model1":
         #     model =
         # Create the model to make prediction
-        detected_image, count_mask, count_none_mask = detect_mask_and_apply_modification_on(image.copy(), faces, None)
+        detected_image, count_mask, count_none_mask = detect_mask_and_apply_modification_on(image.copy(), faces, our_model)
         countWearing = count_mask
         countNotWearing = count_none_mask
         width = 600

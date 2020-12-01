@@ -53,8 +53,8 @@ def process_image_frame(image_frame, model_size=(224, 224)):
             (startX, startY, endX, endY) = box.astype("int")
             # ensure the bounding boxes fall within the dimensions of
             # the frame
-            (startX, startY) = (max(0, startX), max(0, startY))
-            (endX, endY) = (min(w - 1, endX), min(h - 1, endY))
+            (startX, startY) = (max(0, startX-4), max(0, startY-4))
+            (endX, endY) = (min(w - 1, endX+4), min(h - 1, endY+4))
             # extract the face ROI, convert it from BGR to RGB channel
             # ordering, resize it to 224x224, and preprocess it
             face = image[startY:endY, startX:endX]
@@ -76,28 +76,31 @@ def detect_mask_and_apply_modification_on(image_frame, faces, model):
     for face in faces:
         # pass the face through the model to determine if the face
         # has a mask or not
-        # (mask, withoutMask) = model.predict(face)[0]
-        # label = "Mask" if mask > withoutMask else "No Mask"
-        # if mask > withoutMask:
-        #     count_mask = count_mask +1
-        # else:
-        #     count_none_mask = count_none_mask +1
-        # color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
+        result = model.predict(face[0])
+        withoutMask = result[0][0]
+        mask = result[0][1]
+
+        label = "Mask" if mask > withoutMask else "No Mask"
+        if mask > withoutMask:
+            count_mask = count_mask +1
+        else:
+            count_none_mask = count_none_mask +1
+        color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
         # include the probability in the label
-        # label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
+        label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
         # display the label and bounding box rectangle on the output
         # frame
         (startX, startY, endX, endY) = face[1]
-        # cv2.putText(image_frame, label, (startX, startY - 10),
-        #             cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
-        cv2.rectangle(image_frame, (startX, startY), (endX, endY), (0, 255, 0), 2)#color, 2)
+        cv2.putText(image_frame, label, (startX, startY - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
+        cv2.rectangle(image_frame, (startX, startY), (endX, endY), color, 2)
         # show the output image
     return image_frame, count_mask, count_none_mask
 
 
 def video_detection(model, model_size=(224, 224)):
     print("[INFO] starting video stream...")
-    vs = VideoStream(src=0).start()
+    vs = VideoStream(src=0, resolution=(600,338)).start()
     time.sleep(2.0)
     # loop over the frames from the video stream
     while True:
