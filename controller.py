@@ -110,28 +110,31 @@ def video_detection(model, model_size=(224, 224)):
     while True:
         # grab the frame from the threaded video stream and resize it
         # to have a maximum width of 400 pixels
-        frame = vs.read()
-        if np.all(frame == None) or np.shape(frame) == () or np.asscalar(np.sum(frame.reshape(-1))) == 0:
-            continue
-        frame = imutils.resize(frame)
-        image = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2RGB)
-        image = Image.fromarray(image)
-        image = ImageTk.PhotoImage(image)
-        # detect faces in the frame and determine if they are wearing a
-        # face mask or not
-        faces = process_image_frame(frame, model_size)
-        frame, count_mask, count_none_mask = detect_mask_and_apply_modification_on(frame, faces, model)
-        wearing = count_mask
-        notWearing = count_none_mask
-        detected_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        detected_image = Image.fromarray(detected_image)
-        detected_image = ImageTk.PhotoImage(detected_image)
-        # show the output frame
-        cv2.imshow("Frame", frame)
-        key = cv2.waitKey(1) & 0xFF
-        # if the `q` key was pressed, break from the loop
-        if key == ord("q"):
-            break
+        try:
+            frame = vs.read()
+            if np.all(frame == None) or np.shape(frame) == () or np.asscalar(np.sum(frame.reshape(-1))) == 0:
+                continue
+            frame = imutils.resize(frame)
+            image = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2RGB)
+            image = Image.fromarray(image)
+            image = ImageTk.PhotoImage(image)
+            # detect faces in the frame and determine if they are wearing a
+            # face mask or not
+            faces = process_image_frame(frame, model_size)
+            frame, count_mask, count_none_mask = detect_mask_and_apply_modification_on(frame, faces, model)
+            wearing = count_mask
+            notWearing = count_none_mask
+            detected_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            detected_image = Image.fromarray(detected_image)
+            detected_image = ImageTk.PhotoImage(detected_image)
+            # show the output frame
+            cv2.imshow("Frame", frame)
+            key = cv2.waitKey(1) & 0xFF
+            # if the `q` key was pressed, break from the loop
+            if key == ord("q"):
+                break
+        except:
+            pass
     cv2.destroyAllWindows()
     vs.stop()
     return image, detected_image, wearing, notWearing
