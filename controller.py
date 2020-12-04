@@ -111,6 +111,8 @@ def video_detection(model, model_size=(224, 224)):
         # grab the frame from the threaded video stream and resize it
         # to have a maximum width of 400 pixels
         frame = vs.read()
+        if frame == None or np.shape(frame) == () or np.sum(frame) == 0:
+            continue
         frame = imutils.resize(frame)
         image = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
