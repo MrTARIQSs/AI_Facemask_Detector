@@ -129,5 +129,7 @@ frame2.place(relwidth="1.0", relheight="0.2", rely="0.8")
 label = Label(frame2, text="\nNumber of people wearing a mask: "+str(countWearing)+"\nNumber of people not wearing a mask: "+str(countNotWearing), bg="black", fg="white", font="none 20 bold")
 label.pack()
 
+root.title("Face Mask Detector")
 root.resizable(0,0)
+root.iconbitmap(default="maskico.ico")
 root.mainloop()

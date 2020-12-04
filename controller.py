@@ -129,7 +129,7 @@ def video_detection(model, model_size=(224, 224)):
             detected_image = ImageTk.PhotoImage(detected_image)
             # show the output frame
             cv2.putText(frame, "Press esc to exit", (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
-            cv2.imshow("Frame", frame)
+            cv2.imshow("Live Video in Progress, Press esc to Exit", frame)
             key = cv2.waitKey(1) & 0xFF
             # if the `q` key was pressed, break from the loop
             if key == ord("q"):
