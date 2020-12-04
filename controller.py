@@ -55,8 +55,8 @@ def process_image_frame(image_frame, model_size=(224, 224)):
             (startX, startY, endX, endY) = box.astype("int")
             # ensure the bounding boxes fall within the dimensions of
             # the frame
-            (startX, startY) = (max(0, startX-4), max(0, startY-4))
-            (endX, endY) = (min(w - 1, endX+4), min(h - 1, endY+4))
+            (startX, startY) = (max(0, startX-100), max(0, startY-40))
+            (endX, endY) = (min(w - 1, endX+100), min(h - 1, endY+40))
             # extract the face ROI, convert it from BGR to RGB channel
             # ordering, resize it to 224x224, and preprocess it
             face = image[startY:endY, startX:endX]
