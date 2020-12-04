@@ -1,3 +1,4 @@
+#Created by Tariq
 import tkinter as tk
 import cv2
 from tkinter import filedialog
@@ -18,7 +19,13 @@ countNotWearing = 0
 mobilenet_v2_model = loadMobileNetModel()
 our_model = loadOurOwnModel()
 fileName = ""
-placeholder = PhotoImage(file='black-600x338.png')
+placeholder = cv2.imread('black-600x338.png')
+height = int(root.winfo_screenheight() / 3)
+width = int(placeholder.shape[1] * height / placeholder.shape[0])
+placeholder = cv2.resize(placeholder, (width, height), interpolation=cv2.INTER_AREA)  # resizing picture to a more reasonable size
+placeholder = cv2.cvtColor(placeholder, cv2.COLOR_BGR2RGB)  # converting the BGR format of cv2 to RGB
+placeholder = Image.fromarray(placeholder)
+placeholder = ImageTk.PhotoImage(placeholder)
 
 Selection = [
 "Model 1",
@@ -37,11 +44,14 @@ def showVid():
         leftPanel.image = image
         rightPanel.configure(image=detected_image)
         rightPanel.image = detected_image
-        root.deiconify()
     else:
-        image, wearing, notWearing = video_detection(our_model)
+        detected_image, image, wearing, notWearing = video_detection(our_model)
         label.configure(text="\nNumber of people wearing a mask: " + str(wearing) + "\nNumber of people not wearing a mask: " + str(notWearing))
-        root.deiconify()
+        leftPanel.configure(image=image)
+        leftPanel.image = image
+        rightPanel.configure(image=detected_image)
+        rightPanel.image = detected_image
+    root.deiconify()
 
 def addPic():
     global leftPanel, rightPanel, fileName
@@ -64,7 +74,7 @@ def selection(model):
             detected_image, count_mask, count_none_mask = detect_mask_and_apply_modification_on(image.copy(), faces, our_model)
         countWearing = count_mask
         countNotWearing = count_none_mask
-        height = 300
+        height = int(root.winfo_screenheight()/3)
         width = int(image.shape[1]*height/image.shape[0])
         image = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA) #resizing picture to a more reasonable size
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) #converting the BGR format of cv2 to RGB
