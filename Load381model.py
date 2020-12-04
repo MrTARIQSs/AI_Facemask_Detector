@@ -8,5 +8,5 @@ def loadMobileNetModel():
 
 
 def loadOurOwnModel():
-    name = load_model('./mask_models/ourOwnModel381.h5')
+    name = load_model('./mask_models/ourOwnModel381fixed.h5')
     return name

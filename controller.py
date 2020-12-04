@@ -14,7 +14,7 @@ from PIL import ImageTk
 
 # construct the argument parser and parse the arguments
 
-confidence = 0.8
+confidence = 0.80
 
 # load our serialized face detector model from disk
 print("[INFO] loading face detector model...")
