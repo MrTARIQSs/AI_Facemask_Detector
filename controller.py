@@ -133,6 +133,8 @@ def video_detection(model, model_size=(224, 224)):
             # if the `q` key was pressed, break from the loop
             if key == ord("q"):
                 break
+            if key == 27:
+                break
         except:
             pass
     cv2.destroyAllWindows()
