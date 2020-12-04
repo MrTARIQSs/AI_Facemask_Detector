@@ -1,4 +1,5 @@
 #Created by Tariq
+#Credits: https://www.pyimagesearch.com/2016/05/23/opencv-with-tkinter/, https://www.youtube.com/watch?v=jE-SpRI3K5g&t=770s, https://stackoverflow.com/
 import tkinter as tk
 import cv2
 from tkinter import filedialog
@@ -45,7 +46,7 @@ def showVid():
         rightPanel.configure(image=detected_image)
         rightPanel.image = detected_image
     else:
-        detected_image, image, wearing, notWearing = video_detection(our_model)
+        image, detected_image, wearing, notWearing = video_detection(our_model)
         label.configure(text="\nNumber of people wearing a mask: " + str(wearing) + "\nNumber of people not wearing a mask: " + str(notWearing))
         leftPanel.configure(image=image)
         leftPanel.image = image

@@ -114,7 +114,7 @@ def video_detection(model, model_size=(224, 224)):
             frame = vs.read()
             if np.all(frame == None) or np.shape(frame) == () or np.asscalar(np.sum(frame.reshape(-1))) == 0:
                 continue
-            frame = imutils.resize(frame)
+            frame = imutils.resize(frame, width=500)
             image = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2RGB)
             image = Image.fromarray(image)
             image = ImageTk.PhotoImage(image)
@@ -128,6 +128,7 @@ def video_detection(model, model_size=(224, 224)):
             detected_image = Image.fromarray(detected_image)
             detected_image = ImageTk.PhotoImage(detected_image)
             # show the output frame
+            cv2.putText(frame, "Press esc to exit", (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
             cv2.imshow("Frame", frame)
             key = cv2.waitKey(1) & 0xFF
             # if the `q` key was pressed, break from the loop
