@@ -21,7 +21,7 @@ mobilenet_v2_model = loadMobileNetModel()
 our_model = loadOurOwnModel()
 fileName = ""
 placeholder = cv2.imread('black-600x338.png')
-height = int(root.winfo_screenheight() / 3)
+height = int(root.winfo_screenheight() / 2.5)
 width = int(placeholder.shape[1] * height / placeholder.shape[0])
 placeholder = cv2.resize(placeholder, (width, height), interpolation=cv2.INTER_AREA)  # resizing picture to a more reasonable size
 placeholder = cv2.cvtColor(placeholder, cv2.COLOR_BGR2RGB)  # converting the BGR format of cv2 to RGB
@@ -75,7 +75,7 @@ def selection(model):
             detected_image, count_mask, count_none_mask = detect_mask_and_apply_modification_on(image.copy(), faces, our_model)
         countWearing = count_mask
         countNotWearing = count_none_mask
-        height = int(root.winfo_screenheight()/3)
+        height = int(root.winfo_screenheight()/2.5)
         width = int(image.shape[1]*height/image.shape[0])
         image = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA) #resizing picture to a more reasonable size
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) #converting the BGR format of cv2 to RGB
@@ -97,10 +97,10 @@ root.configure(background="#aaaaaa")
 
 leftPanel = Label(image=placeholder)
 leftPanel.image = placeholder
-leftPanel.pack(side="left", padx=10, pady=120)
+leftPanel.pack(side="left", padx=10, pady=150)
 rightPanel = Label(image=placeholder)
 rightPanel.image = placeholder
-rightPanel.pack(side="right", padx=10, pady=120)
+rightPanel.pack(side="right", padx=10, pady=150)
 
 
 frame = tk.Frame(root, bg="black")
