@@ -55,8 +55,8 @@ def process_image_frame(image_frame, model_size=(224, 224)):
             (startX, startY, endX, endY) = box.astype("int")
             # ensure the bounding boxes fall within the dimensions of
             # the frame
-            (startX, startY) = (max(0, startX-10), max(0, startY-10))
-            (endX, endY) = (min(w - 1, endX+10), min(h - 1, endY+10))
+            (startX, startY) = (max(0, startX - 10), max(0, startY - 10))
+            (endX, endY) = (min(w - 1, endX + 10), min(h - 1, endY + 10))
             # extract the face ROI, convert it from BGR to RGB channel
             # ordering, resize it to 224x224, and preprocess it
             face = image[startY:endY, startX:endX]
@@ -84,9 +84,9 @@ def detect_mask_and_apply_modification_on(image_frame, faces, model):
 
         label = "Mask" if mask > withoutMask else "No Mask"
         if mask > withoutMask:
-            count_mask = count_mask +1
+            count_mask = count_mask + 1
         else:
-            count_none_mask = count_none_mask +1
+            count_none_mask = count_none_mask + 1
         color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
         # include the probability in the label
         label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
@@ -141,4 +141,3 @@ def video_detection(model, model_size=(224, 224)):
     cv2.destroyAllWindows()
     vs.stop()
     return image, detected_image, wearing, notWearing
-
