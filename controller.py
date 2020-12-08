@@ -1,6 +1,6 @@
-# created by Hussain
-# most of the code is from https://www.pyimagesearch.com/2020/05/04/covid-19-face-mask-detector-with-opencv-keras-tensorflow-and-deep-learning/
-# and has been adapted to our needs
+# created by Hussain most of the code is from
+# https://www.pyimagesearch.com/2020/05/04/covid-19-face-mask-detector-with-opencv-keras-tensorflow-and-deep-learning
+# / and has been adapted to our needs
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 import numpy as np
@@ -12,8 +12,7 @@ import os
 from PIL import Image
 from PIL import ImageTk
 
-# construct the argument parser and parse the arguments
-
+# This confidence is used as threshold for face detection
 confidence = 0.50
 
 # load our serialized face detector model from disk
@@ -24,11 +23,15 @@ weightsPath = os.path.sep.join(["face_detector",
 net = cv2.dnn.readNet(prototxtPath, weightsPath)
 
 
+# This method takes image or frame and the desired size of the returns images It prepares the image/frame for face
+# detection and then perform it using FaceNet which returns a list of faces with their confidence and location
+# which get pre-process to be classified
+
 def process_image_frame(image_frame, model_size=(224, 224)):
     # load the input image from disk, clone it, and grab the image spatial
     # dimensions
     if type(image_frame) == str:
-        image = cv2.imread(image_frame)  # (args["image"])
+        image = cv2.imread(image_frame)
     else:
         image = image_frame
     orig = image.copy()
@@ -70,6 +73,9 @@ def process_image_frame(image_frame, model_size=(224, 224)):
     return faces
 
 
+# This method takes the original image/frame, faces which will come from process_image_frame method, and the model
+# for detecting masks It returns the image/frame after applying the classifier and counter of how many people wear
+# mask and how many are not It processes all faces in an image/frame and classify whether a face wears a mask or not
 def detect_mask_and_apply_modification_on(image_frame, faces, model):
     # determine the class label and color we'll use to draw
     # the bounding box and text
@@ -100,6 +106,8 @@ def detect_mask_and_apply_modification_on(image_frame, faces, model):
     return image_frame, count_mask, count_none_mask
 
 
+# It runs a video stream and processes each frame using process_image_frame and detect_mask_and_apply_modification_on
+# and display the result in the stream
 def video_detection(model, model_size=(224, 224)):
     wearing = 0
     notWearing = 0
